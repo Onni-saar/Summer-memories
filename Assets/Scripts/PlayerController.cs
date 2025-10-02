@@ -16,6 +16,8 @@ int score =0;
 
 public int winScore;
 public GameObject winText;
+public Transform player;
+public Vector3 offset;
 private void Awake()
 {
     rb = GetComponent<Rigidbody>();
@@ -48,4 +50,9 @@ private void Awake()
             }
         }
     }
+    void LateUpdate()
+{
+    transform.position = player.position + offset;
+}
+
 }
