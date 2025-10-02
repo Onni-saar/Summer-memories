@@ -4,7 +4,9 @@ public class CameraFollow : MonoBehaviour
 {
     public Transform player;
     public Vector3 offset;
+    public float smoothTime = 0.2f;
     private Rigidbody playerRb;
+    private Vector3 velocity = Vector3.zero;
 
     void Start()
     {
@@ -13,20 +15,10 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
-        Vector3 moveDirection = playerRb.linearVelocity;
-        if (moveDirection.sqrMagnitude > 0.1f)
-        {
-            moveDirection.y = 0; // Ignore vertical movement
-            moveDirection.Normalize();
-            Vector3 desiredPosition = player.position - moveDirection * offset.z + Vector3.up * offset.y;
-            transform.position = desiredPosition;
-            transform.LookAt(player.position, Vector3.up);
-        }
-        else
-        {
-            // If not moving, stay at default offset behind player
-            transform.position = player.position - player.forward * offset.z + Vector3.up * offset.y;
-            transform.LookAt(player.position, Vector3.up);
-        }
+        // Always follow behind the sphere's local forward direction
+        Vector3 behindDirection = -player.forward;
+        Vector3 desiredPosition = player.position + behindDirection * offset.z + Vector3.up * offset.y + player.right * offset.x;
+        transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothTime);
+        transform.LookAt(player.position, Vector3.up);
     }
 }
