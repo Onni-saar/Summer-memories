@@ -2,23 +2,20 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform player;
-    public Vector3 offset;
-    public float smoothTime = 0.2f;
-    private Rigidbody playerRb;
-    private Vector3 velocity = Vector3.zero;
+    public Transform target;
+    public float smoothSpeed = 0.125f;
+    public Vector3 locationOffset;
+    public Vector3 rotationOffset;
 
-    void Start()
+    void FixedUpdate()
     {
-        playerRb = player.GetComponent<Rigidbody>();
-    }
+        Vector3 desiredPosition = target.position + locationOffset;
+        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+        transform.position = smoothedPosition;
 
-    void LateUpdate()
-    {
-        // Always follow behind the sphere's local forward direction
-        Vector3 behindDirection = -player.forward;
-        Vector3 desiredPosition = player.position + behindDirection * offset.z + Vector3.up * offset.y + player.right * offset.x;
-        transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothTime);
-        transform.LookAt(player.position, Vector3.up);
+        // Only use world upright rotation, ignore target's rotation
+        Quaternion desiredRotation = Quaternion.Euler(rotationOffset);
+        Quaternion smoothedRotation = Quaternion.Lerp(transform.rotation, desiredRotation, smoothSpeed);
+        transform.rotation = smoothedRotation;
     }
 }
