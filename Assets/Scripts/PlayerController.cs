@@ -18,6 +18,7 @@ public int winScore;
 public GameObject winText;
 public Transform player;
 public Vector3 offset;
+public FixedJoystick fixedJoystick;
 private void Awake()
 {
     rb = GetComponent<Rigidbody>();
